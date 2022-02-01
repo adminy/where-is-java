@@ -1,5 +1,2 @@
-*.js
-js
-*.d.ts
-node_modules
 .vscode
+node_modules

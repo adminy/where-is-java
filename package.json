@@ -1,41 +1,36 @@
 {
   "name": "@viperproject/locate-java-home",
   "version": "1.1.7",
-  "description": "Locates JAVA_HOME on any platform, and can differentiate between different versions.",
-  "main": "js/es5/index.js",
-  "module": "js/es6/index.js",
-  "typings": "js/es5/index",
+  "description": "Lists all java versions installed",
+  "main": "index.js",
+  "module": "index.js",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/viperproject/locate-java-home.git"
   },
   "scripts": {
-    "prepare": "tsc && tsc -p tsconfig.es6.json && javac -source 1.7 -target 1.7 ts/test/fixtures/EnvironmentTest.java",
-    "test": "npm run prepare && mocha js/es5/test --timeout 30000"
+    "prepare": "javac -source 1.8 -target 1.8 test/fixtures/EnvironmentTest.java",
+    "test": "tape test"
   },
   "bin": {
-    "locate-java-home": "./bin/locate-java-home"
+    "whereisjava": "./bin/whereisjava",
+    "locate-java-home": "./bin/whereisjava",
+    "where-is-java": "./bin/whereisjava",
+    "whereIsJava": "./bin/whereisjava",
+    "wheresJava": "./bin/whereisjava",
+    "wij": "./bin/whereisjava",
+    "wj": "./bin/whereisjava"
   },
   "author": {
-    "name": "Programming Methodology Group, ETH Zürich",
-    "email": "viper@inf.ethz.ch",
-    "url": "https://viper.ethz.ch"
+    "name": "Marin",
+    "url": "https://codeismagic.com"
   },
-  "license": "MIT",
   "bugs": {
-    "url": "https://github.com/viperproject/locate-java-home/issues"
+    "url": "https://github.com/adminy/locate-java-home/issues"
   },
-  "homepage": "https://github.com/viperproject/locate-java-home#readme",
+  "homepage": "https://github.com/adminy/locate-java-home#readme",
   "dependencies": {
-    "async": "^3.2.2",
+    "registry-js": "^1.15.1",
     "semver": "^7.3.5"
-  },
-  "devDependencies": {
-    "@types/async": "^3.2.10",
-    "@types/mocha": "^9.0.0",
-    "@types/node": "^17.0.0",
-    "@types/semver": "^7.3.9",
-    "mocha": "^9.2.0",
-    "typescript": "^4.5.4"
   }
 }

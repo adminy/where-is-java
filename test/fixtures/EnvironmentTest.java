@@ -1,7 +1,3 @@
-/**
- * Prints out information about the Java environment for comparison against
- * LocateJavaHome.
- */
 class EnvironmentTest {
   public static void main(String[] args) {
     // Escape backslashes in path (Windows).
