@@ -68,7 +68,7 @@ cp.spawnSync(myJava.home + '/bin/javac', ['MyJavaClass.java'])
 ## TODO:
 - [ ] Test no java installed (all 3 oses)
 - [ ] Test no default java selected
-
+- [ ] check JAVA_HOME variable, for better install coverage
 
 ## Motivation
 - There is nothing good out there, especially if you try it in an environment other than node.js
