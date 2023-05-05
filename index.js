@@ -1,8 +1,7 @@
-const fs = require('fs')
-const cp = require('child_process')
-const satisfies = require('semver/functions/satisfies')
-const coerce = require('semver/functions/coerce')
-const { enumerateValues, HKEY } = require('registry-js')
+import fs from 'fs'
+import cp from 'child_process'
+import { satisfies, coerce } from 'semver'
+import { enumerateValues, HKEY } from 'registry-js'
 
 const winReg = path => {
   const records = []
@@ -12,8 +11,8 @@ const winReg = path => {
   return records
 }
 
-const javaInfo = (javaExec, runExec, fileExists) => {
-  const params = runExec(javaExec, ['-XshowSettings:properties', '-version']).stderr.toString()
+const javaInfo = javaExec => {
+  const params = cp.spawnSync(javaExec, ['-XshowSettings:properties', '-version']).stderr.toString()
     .trim()
     .split('\n')
     .filter(prop => prop.startsWith(' '))
@@ -46,11 +45,11 @@ const javaInfo = (javaExec, runExec, fileExists) => {
     is64Bit: sun.arch.data.model === '64',
     isArm: os.arch === 'aarch64',
     isX86: os.arch === 'x86_64',
-    isJDK: fileExists(java.home + file.separator + 'bin' + file.separator + 'javac')
+    isJDK: fs.existsSync(java.home + file.separator + 'bin' + file.separator + 'javac')
   }
 }
 
-const win32 = runExec => {
+const win32 = () => {
   const paths = [
     'SOFTWARE\\JavaSoft\\JDK',
     'SOFTWARE\\JavaSoft\\Java Development Kit',
@@ -71,9 +70,9 @@ const win32 = runExec => {
   return [...new Set(homes)].map(home => ({ home }))
 }
 
-const darwin = (runExec, fileExists) => {
+const darwin = () => {
   const EXTRACT_JAVA = /^\s+(.*?)\s\((.*?)\)\s"(.*?)"\s-\s"(.*?)"\s(.*?)$/
-  const lines = runExec('/usr/libexec/java_home', ['-V']).stderr.toString().trim().split('\n')
+  const lines = cp.spawnSync('/usr/libexec/java_home', ['-V']).stderr.toString().trim().split('\n')
   // console.log('these should equal: ', parseInt(/\d+/.exec(lines[0])[0]) === lines.length - 1)
   return lines.slice(1).map(line => {
     const [_, version, arch, vendor, edition, home] = EXTRACT_JAVA.exec(line)
@@ -85,42 +84,31 @@ const darwin = (runExec, fileExists) => {
       is64Bit: arch.includes('64'),
       isArm: arch === 'aarch64',
       isX86: arch === 'x86_64',
-      isJDK: fileExists(home + '/bin/javac')
+      isJDK: fs.existsSync(home + '/bin/javac')
     }
   })
 }
 
-const linux = runExec => {
-  return runExec('update-java-alternatives', ['-l']).stdout.toString()
+const linux = () => cp.spawnSync('update-java-alternatives', ['-l']).stdout.toString()
     .trim()
     .split('\n')
     .map(line => line.split(' '))
     .map(([version, vendor, home]) => ({ home }))
-}
 
-const checkOnPlatform = (type, runExec, fileExists) =>
-  ({ darwin, macos: darwin, linux, win32 })[type](runExec, fileExists)
-
-const markDefault = (platform, runExec, fileExists) => {
-  const defaultJava = javaInfo('java', runExec, fileExists)
-  const javaVersions = checkOnPlatform(platform, runExec, fileExists)
-  const separator = platform === 'win32' ? '\\' : '/'
+export default ({version = '*', mustBeJDK = false, mustBeJRE = false, mustBe64Bit, mustBeArm }) => {
+  const defaultJava = javaInfo('java')
+  const javaVersions = ({ darwin, macos: darwin, linux, win32 })[process.platform]()
+  const separator = process.platform === 'win32' ? '\\' : '/'
   const exe = separator + 'bin' + separator + 'java' + (separator === '\\' ? '.exe' : '')
   for (const java of javaVersions) {
     java.home === defaultJava.home && (java.default = true)
-    Object.assign(java, javaInfo(java.home + exe, runExec, fileExists), { home: java.home })
+    Object.assign(java, javaInfo(java.home + exe), { home: java.home })
   }
-  return javaVersions
-}
-
-module.exports = ({
-  version = '*', mustBeJDK = false, mustBeJRE = false, mustBe64Bit, mustBeArm,
-  platform = process.platform, fileExists = fs.existsSync, runExec = cp.spawnSync
-}) => markDefault(platform, runExec, fileExists)
-  .filter(java =>
+  return javaVersions.filter(java =>
     (!mustBeJDK && !mustBeJRE ? true : (java.isJDK ? mustBeJDK : mustBeJRE)) &&
     (mustBe64Bit ? java.is64Bit : true) &&
     (mustBeArm ? java.isArm : true) &&
     satisfies(coerce(java.version), version)
   )
   .sort((a, b) => b.version.localeCompare(a.version))
+}

@@ -1,0 +1,45 @@
+name: Setup Build Test Publish
+on: 
+  - push
+  - pull_request
+jobs:
+  setup_build_test:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos-latest, ubuntu-latest, windows-latest]
+        java_version: [8, 11, 17]
+        node_version: [16.x, 18.x]
+        java_dist: [ 'temurin', 'microsoft' ]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-java@v3
+        with:
+          distribution: 
+          java-version: ${{ matrix.java_version }}
+      - uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node_version }}
+          cache: 'npm'
+      - name: Setup, Run Tests then publish
+        run: |
+          npm version
+          npm install
+          npm test
+        env:
+          TOKEN: ${{secrets.GITHUB_TOKEN}}
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18
+          cache: 'npm'
+      - name: Setup & publish
+        run: |
+          npm config set //npm.pkg.github.com/:_authToken $TOKEN
+          npm publish --access public
+        env:
+          TOKEN: ${{secrets.GITHUB_TOKEN}}

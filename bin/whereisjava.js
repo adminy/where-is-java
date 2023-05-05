@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-const WhereIsJava = require('../index.js')
+import WhereIsJava from '../index.js'
 
 for (const java of WhereIsJava({})) {
   console.log([

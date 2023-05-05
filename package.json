@@ -1,36 +1,37 @@
 {
-  "name": "@viperproject/locate-java-home",
-  "version": "1.1.7",
-  "description": "Lists all java versions installed",
+  "name": "where-is-java",
+  "version": "1.0.0",
+  "description": "Lists all java versions installed conditionally",
   "main": "index.js",
   "module": "index.js",
+  "type": "module",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/viperproject/locate-java-home.git"
+    "url": "git+https://github.com/viperproject/where-is-java.git"
   },
   "scripts": {
     "prepare": "javac -source 1.8 -target 1.8 test/fixtures/EnvironmentTest.java",
     "test": "tape test"
   },
   "bin": {
-    "whereisjava": "./bin/whereisjava",
-    "locate-java-home": "./bin/whereisjava",
-    "where-is-java": "./bin/whereisjava",
-    "whereIsJava": "./bin/whereisjava",
-    "wheresJava": "./bin/whereisjava",
-    "wij": "./bin/whereisjava",
-    "wj": "./bin/whereisjava"
+    "whereisjava": "./bin/whereisjava.js",
+    "locate-java-home": "./bin/whereisjava.js",
+    "where-is-java": "./bin/whereisjava.js",
+    "whereIsJava": "./bin/whereisjava.js",
+    "wheresJava": "./bin/whereisjava.js",
+    "wij": "./bin/whereisjava.js",
+    "wj": "./bin/whereisjava.js"
   },
   "author": {
     "name": "Marin",
     "url": "https://codeismagic.com"
   },
   "bugs": {
-    "url": "https://github.com/adminy/locate-java-home/issues"
+    "url": "https://github.com/adminy/where-is-java/issues"
   },
-  "homepage": "https://github.com/adminy/locate-java-home#readme",
+  "homepage": "https://github.com/adminy/where-is-java#readme",
   "dependencies": {
     "registry-js": "^1.15.1",
-    "semver": "^7.3.5"
+    "semver": "^7.5.0"
   }
 }
