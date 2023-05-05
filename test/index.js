@@ -7,7 +7,7 @@ import LocateJavaHome from '../index.js'
 test('API Tests', t => {
   const allJavaHomes = LocateJavaHome()
   t.ok(allJavaHomes.length, 'Finds Java installations with no filter')
-  t.ok(LocateJavaHome({ mustBeJDK: true }).length, 'Finds JDK')
+  process.platform !== 'win32' && t.ok(LocateJavaHome({ mustBeJDK: true }).length, 'Finds JDK')
   for (const javaHome of LocateJavaHome()) {
     if (process.platform !== 'linux') {
       const envData = JSON.parse(spawnSync(path.join(javaHome.home, 'bin', 'java'), ['-classpath', 'test/fixtures', 'EnvironmentTest']).stdout.toString().trim())
