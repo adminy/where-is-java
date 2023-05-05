@@ -1,5 +1,5 @@
 {
-  "name": "@adminy/where-is-java",
+  "name": "where-is-java",
   "version": "1.0.0",
   "description": "Lists all java versions installed conditionally",
   "main": "index.js",
