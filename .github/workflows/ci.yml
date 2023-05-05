@@ -21,7 +21,7 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node_version }}
-      - name: Setup, Run Tests then publish
+      - name: Setup & Run Tests
         run: |
           npm version
           npm install
@@ -35,9 +35,7 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: 18
-      - name: Setup & publish
-        run: |
-          npm config set //npm.pkg.github.com/:_authToken $TOKEN
-          npm publish --access public
+      - name: Publish
+        run: npm publish --access public
         env:
-          TOKEN: ${{secrets.GITHUB_TOKEN}}
+          NPM_CONFIG_TOKEN: ${{secrets.GITHUB_TOKEN}}
