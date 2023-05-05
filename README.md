@@ -1,20 +1,16 @@
 # Where is Java
-> finds all java versions on any platform.
-
-[![Test Status](https://github.com/adminy/wij/workflows/test/badge.svg?branch=master)](https://github.com/adminy/wij/actions?query=workflow%3Apublish+branch%3Amaster)
-
-## Usage
-
-    npm install @adminy/wij
-
+> finds all java versions on any platform syncronously.
 ## API
 ```javascript
-const fs = require('fs')
-const cp = require('child_process')
-const WhereIsJava = require('@adminy/wij')
-const listOfJavaVersions = WhereIsJava({
-  version: '>1.8', mustBeJDK: true, mustBeJRE: false, mustBe64Bit: true, mustBeArm: true,
-  platform: process.platform, fileExists: fs.existsSync, runExec: cp.spawnSync
+import fs from 'fs'
+import cp from 'child_process'
+import WhereIsJava from 'where-is-java'
+const listOfJavaVersions = WhereIsJava({ // all arguments are optional
+  version: '>1.8',
+  mustBeJDK: true,
+  mustBeJRE: false,
+  mustBe64Bit: true,
+  mustBeArm: false
 })
 
 const myJava = listOfJavaVersions.find(java => java.default)
@@ -63,13 +59,3 @@ cp.spawnSync(myJava.home + '/bin/javac', ['MyJavaClass.java'])
   }
 ]
 ```
-
-
-## TODO:
-- [ ] Test no java installed (all 3 oses)
-- [ ] Test no default java selected
-- [ ] check JAVA_HOME variable, for better install coverage
-
-## Motivation
-- There is nothing good out there, especially if you try it in an environment other than node.js
-- Completely syncronous solution, keep the code clean, call and use right away, no waiting or weird fails

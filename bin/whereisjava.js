@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import WhereIsJava from '../index.js'
 
-for (const java of WhereIsJava({})) {
+for (const java of WhereIsJava()) {
   console.log([
     java.isJDK ? '[JDK]' : '[JRE]',
     java.isArm ? '[ARM]' : '[x86]',

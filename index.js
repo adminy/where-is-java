@@ -95,9 +95,12 @@ const linux = () => cp.spawnSync('update-java-alternatives', ['-l']).stdout.toSt
     .map(line => line.split(' '))
     .map(([version, vendor, home]) => ({ home }))
 
-export default ({version = '*', mustBeJDK = false, mustBeJRE = false, mustBe64Bit, mustBeArm }) => {
+const defaultArgs = { version: '*', mustBeJDK: false, mustBeJRE: false, mustBe64Bit: false, mustBeArm: false }
+export default ({ version = '*', mustBeJDK = false, mustBeJRE = false, mustBe64Bit = false, mustBeArm = false } = defaultArgs) => {
   const defaultJava = javaInfo('java')
   const javaVersions = ({ darwin, macos: darwin, linux, win32 })[process.platform]()
+  const envJava = process.env.JAVA_HOME
+  envJava && !javaVersions.find(j => j.home === envJava) && fs.existsSync(envJava) && javaVersions.unshift({ home: envJava })
   const separator = process.platform === 'win32' ? '\\' : '/'
   const exe = separator + 'bin' + separator + 'java' + (separator === '\\' ? '.exe' : '')
   for (const java of javaVersions) {
