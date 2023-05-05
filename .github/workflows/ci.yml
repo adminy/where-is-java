@@ -36,6 +36,6 @@ jobs:
         with:
           node-version: 18
       - name: Publish
-        run: npm publish --access public
+        run: npm publish --registry=https://npm.pkg.github.com --access public
         env:
           NPM_CONFIG_TOKEN: ${{secrets.GITHUB_TOKEN}}
