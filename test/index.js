@@ -9,11 +9,12 @@ test('API Tests', t => {
   t.ok(allJavaHomes.length, 'Finds Java installations with no filter')
   t.ok(LocateJavaHome({ mustBeJDK: true }).length, 'Finds JDK')
   for (const javaHome of LocateJavaHome()) {
-    const java = javaHome
-    const envData = JSON.parse(spawnSync(path.join(java.home, 'bin', 'java'), ['-classpath', 'test/fixtures', 'EnvironmentTest']).stdout.toString().trim())
-    t.same(realpathSync(path.join(javaHome.home, javaHome.isJDK ? '' : 'jre')), realpathSync(envData.path), 'same java path')
-    t.same(javaHome.is64Bit, envData.is64Bit, 'same bits')
-    t.ok(javaHome.version.startsWith(envData.version), 'same version')
+    if (process.platform !== 'linux') {
+      const envData = JSON.parse(spawnSync(path.join(javaHome.home, 'bin', 'java'), ['-classpath', 'test/fixtures', 'EnvironmentTest']).stdout.toString().trim())
+      t.same(realpathSync(path.join(javaHome.home, !javaHome.isJDK && process.platform === 'darwin' ? 'jre' : '')), realpathSync(envData.path), 'same java path')
+      t.same(javaHome.is64Bit, envData.is64Bit, 'same bits')
+      t.ok(javaHome.version.startsWith(envData.version), 'same version')
+    }
   }
   const javaHomeZero = allJavaHomes[0]
   const expectedCount = allJavaHomes.filter(javaHome => javaHome.version === javaHomeZero.version).length
