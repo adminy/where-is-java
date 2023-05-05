@@ -21,7 +21,6 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node_version }}
-          cache: 'npm'
       - name: Setup, Run Tests then publish
         run: |
           npm version
@@ -36,7 +35,6 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: 18
-          cache: 'npm'
       - name: Setup & publish
         run: |
           npm config set //npm.pkg.github.com/:_authToken $TOKEN
